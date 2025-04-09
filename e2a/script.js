@@ -248,7 +248,8 @@ function checkAnswer() {
             .map(input => input.value);
         if (selected.length === 0) return alert('Пожалуйста, выберите хотя бы один вариант!');
         answers[currentQuestion] = selected;
-    } else if (quizData[currentQuestion].type === "number") {
+    } 
+    else if (quizData[currentQuestion].type === "number") {
         selected = sanitizeInput(currentQ.querySelector(`#number-answer${currentQuestion}`).value.trim());
         if (!selected) return alert('Пожалуйста, введите число!');
         answers[currentQuestion] = selected;
@@ -261,6 +262,12 @@ function checkAnswer() {
             selected.push(selectedOption);
         }
         answers[currentQuestion] = selected;
+    } else if (item.type === "date") { // Добавляем поддержку date
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `date-answer${index}`;
+        input.placeholder = 'Введите дату (например, 20.07.1969)';
+        optionsDiv.appendChild(input);
     }
 
     checkButton.style.display = 'none';
