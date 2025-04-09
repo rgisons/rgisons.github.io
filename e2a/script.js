@@ -309,25 +309,19 @@ function showResults() {
     navigationContainer.style.display = 'none';
     resultContainer.style.display = 'block';
 
-    resultContainer.innerHTML = `
-        <p>Викторина завершена! Вы набрали ${score} из ${quizData.length} баллов! Пожалуйста, введите код в форму.</p>
-        <div>
-            <p>Ваш уникальный код: <strong id="unique-code">${uniqueCode}</strong></p>
-            <button id="copy-code">Скопировать код</button>
-        </div>
-        <div id="yandex-form-container">
-        <iframe 
-        src="https://docs.google.com/forms/d/e/1FAIpQLSc46otjgrk50k1CsN0_IX1nXHKPcuPpA7w6T_4BSjxjzTJJ5g/viewform?embedded=true"
-        width="640" 
-        height="720" 
-        frameborder="0" 
-        marginheight="0" 
-        marginwidth="0">
-        Загрузка…
-        </iframe>
-        </div>
-
-    `;
+    const formContainer = document.createElement('div');
+    formContainer.id = 'yandex-form-container';
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://docs.google.com/forms/d/e/1FAIpQLSc46otjgrk50k1CsN0_IX1nXHKPcuPpA7w6T_4BSjxjzTJJ5g/viewform?embedded=true';
+    iframe.width = '640';
+    iframe.height = '720';
+    iframe.frameBorder = '0';
+    iframe.marginHeight = '0';
+    iframe.marginWidth = '0';
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms');
+    iframe.textContent = 'Загрузка…';
+    formContainer.appendChild(iframe);
+    resultContainer.appendChild(formContainer);
 
     document.getElementById('copy-code').addEventListener('click', () => {
         const code = document.getElementById('unique-code').textContent;
