@@ -316,11 +316,17 @@ function showResults() {
             <button id="copy-code">Скопировать код</button>
         </div>
         <div id="yandex-form-container">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc46otjgrk50k1CsN0_IX1nXHKPcuPpA7w6T_4BSjxjzTJJ5g/viewform?embedded=true"
-                width="640" height="720" frameborder="0" marginheight="0" marginwidth="0" sandbox="allow-same-origin allow-forms">
-                Загрузка…
-            </iframe>
+        <iframe 
+        src="https://docs.google.com/forms/d/e/1FAIpQLSc46otjgrk50k1CsN0_IX1nXHKPcuPpA7w6T_4BSjxjzTJJ5g/viewform?embedded=true"
+        width="640" 
+        height="720" 
+        frameborder="0" 
+        marginheight="0" 
+        marginwidth="0">
+        Загрузка…
+        </iframe>
         </div>
+
     `;
 
     document.getElementById('copy-code').addEventListener('click', () => {
