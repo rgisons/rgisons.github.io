@@ -45,28 +45,28 @@ function showQuestion() {
     questionDiv.innerHTML = `<div class="question">${q.question}</div>`;
 
     if (q.type === "number") {
-        questionDiv.innerHTML += '<div style="text-align: left;"><input type="number" id="answer"></div>';
+        questionDiv.innerHTML += '<div style="text-align: left;"><input type="number" id="answer" required></div>';
     } else if (q.type === "text") {
-        questionDiv.innerHTML += `<div style="text-align: left;"><input type="text" id="answer" placeholder="${q.placeholder || ''}"></div>`;
+        questionDiv.innerHTML += `<div style="text-align: left;"><input type="text" id="answer" placeholder="${q.placeholder || ''}" required></div>`;
     } else if (q.type === "radio") {
-        let optionsHtml = '<div class="options">';
-        q.options.forEach(option => {
-            optionsHtml += `<label><input type="radio" name="answer" value="${option}">${option}</label>`;
+        let optionsHtml = '<div class="options" id="radio-options">';
+        q.options.forEach((option, index) => {
+            optionsHtml += `<label><input type="radio" name="answer" value="${option}" id="radio-${index}">${option}</label>`;
         });
         questionDiv.innerHTML += optionsHtml + '</div>';
     } else if (q.type === "checkbox") {
-        let optionsHtml = '<div class="options">';
-        q.options.forEach(option => {
-            optionsHtml += `<label><input type="checkbox" name="answer" value="${option}">${option}</label>`;
+        let optionsHtml = '<div class="options" id="checkbox-options">';
+        q.options.forEach((option, index) => {
+            optionsHtml += `<label><input type="checkbox" name="answer" value="${option}" id="checkbox-${index}">${option}</label>`;
         });
         questionDiv.innerHTML += optionsHtml + '</div>';
     } else if (q.type === "match") {
-        let matchesHtml = '<div class="options">';
+        let matchesHtml = '<div class="options" id="match-options">';
         q.matches.forEach((match, index) => {
             matchesHtml += `
                 <div class="match-item">
                     <p>${match.item}</p>
-                    <select id="match-${index}">
+                    <select id="match-${index}" required>
                         <option value="">Выберите вариант</option>
                         ${match.options.map(option => `<option value="${option}">${option}</option>`).join('')}
                     </select>
@@ -87,42 +87,66 @@ function nextQuestion() {
     let userAnswer;
     let isValid = true;
 
+    // Проверка для числовых и текстовых ответов
     if (q.type === "number" || q.type === "text") {
-        userAnswer = document.getElementById("answer").value;
+        const input = document.getElementById("answer");
+        userAnswer = input.value.trim();
         if (!userAnswer) {
-            alert("Пожалуйста, введите ответ");
+            input.style.border = "2px solid red";
             isValid = false;
+        } else {
+            input.style.border = "";
         }
-    } else if (q.type === "radio") {
+    } 
+    // Проверка для радио-кнопок
+    else if (q.type === "radio") {
         const selected = document.querySelector('input[name="answer"]:checked');
         if (!selected) {
-            alert("Пожалуйста, выберите один вариант");
+            document.getElementById("radio-options").style.border = "2px solid red";
             isValid = false;
         } else {
+            document.getElementById("radio-options").style.border = "";
             userAnswer = selected.value;
         }
-    } else if (q.type === "checkbox") {
-        const selected = document.querySelectorAll('input[name="answer"]:checked');
+    } 
+    // Проверка для чекбоксов
+    else if (q.type === "checkbox") {
+        const selected = Array.from(document.querySelectorAll('input[name="answer"]:checked'));
         if (selected.length === 0) {
-            alert("Пожалуйста, выберите хотя бы один вариант");
+            document.getElementById("checkbox-options").style.border = "2px solid red";
             isValid = false;
         } else {
-            userAnswer = Array.from(selected).map(input => input.value);
+            document.getElementById("checkbox-options").style.border = "";
+            userAnswer = selected.map(input => input.value);
         }
-    } else if (q.type === "match") {
-        userAnswer = q.matches.map((match, index) => {
+    } 
+    // Проверка для соответствий
+    else if (q.type === "match") {
+        userAnswer = [];
+        let allSelected = true;
+        
+        q.matches.forEach((match, index) => {
             const select = document.getElementById(`match-${index}`);
-            return select ? select.value : '';
+            if (!select.value) {
+                select.style.border = "2px solid red";
+                allSelected = false;
+            } else {
+                select.style.border = "";
+                userAnswer.push(select.value);
+            }
         });
         
-        if (userAnswer.some(answer => !answer)) {
-            alert("Пожалуйста, сопоставьте все элементы");
+        if (!allSelected) {
             isValid = false;
         }
     }
 
-    if (!isValid) return;
+    if (!isValid) {
+        alert("Пожалуйста, ответьте на вопрос перед продолжением!");
+        return;
+    }
 
+    // Сохраняем ответ и проверяем его
     answers[currentQuestion] = userAnswer;
     checkAnswer(userAnswer, q);
     currentQuestion++;
