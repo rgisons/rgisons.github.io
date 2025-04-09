@@ -85,20 +85,43 @@ function showQuestion() {
 function nextQuestion() {
     const q = quizData[currentQuestion];
     let userAnswer;
+    let isValid = true;
 
     if (q.type === "number" || q.type === "text") {
         userAnswer = document.getElementById("answer").value;
+        if (!userAnswer) {
+            alert("Пожалуйста, введите ответ");
+            isValid = false;
+        }
     } else if (q.type === "radio") {
         const selected = document.querySelector('input[name="answer"]:checked');
-        userAnswer = selected ? selected.value : '';
+        if (!selected) {
+            alert("Пожалуйста, выберите один вариант");
+            isValid = false;
+        } else {
+            userAnswer = selected.value;
+        }
     } else if (q.type === "checkbox") {
-        userAnswer = Array.from(document.querySelectorAll('input[name="answer"]:checked')).map(input => input.value);
+        const selected = document.querySelectorAll('input[name="answer"]:checked');
+        if (selected.length === 0) {
+            alert("Пожалуйста, выберите хотя бы один вариант");
+            isValid = false;
+        } else {
+            userAnswer = Array.from(selected).map(input => input.value);
+        }
     } else if (q.type === "match") {
         userAnswer = q.matches.map((match, index) => {
             const select = document.getElementById(`match-${index}`);
             return select ? select.value : '';
         });
+        
+        if (userAnswer.some(answer => !answer)) {
+            alert("Пожалуйста, сопоставьте все элементы");
+            isValid = false;
+        }
     }
+
+    if (!isValid) return;
 
     answers[currentQuestion] = userAnswer;
     checkAnswer(userAnswer, q);
@@ -131,8 +154,8 @@ function showResult() {
     quiz.style.display = "none";
     result.style.display = "block";
     const randomCode = Math.floor(100000 + Math.random() * 900000);
-    scoreDisplay.textContent = `Поздравяляем, вы прошли виктоину! Ваш результат: ${score} из ${quizData.length}`;
-    codeDisplay.textContent = `Ваш уникальный код, который нужно вставить в форму ниже: ${randomCode}${score}`;
+    scoreDisplay.textContent = `Ваш результат: ${score} из ${quizData.length}`;
+    codeDisplay.textContent = `Ваш код: ${randomCode}${score}`;
 }
 
 function copyCode() {
