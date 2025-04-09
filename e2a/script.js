@@ -164,6 +164,13 @@ function createQuestionElement(item, index) {
         input.id = `number-answer${index}`;
         input.placeholder = 'Введите число';
         optionsDiv.appendChild(input);
+    
+    } else if (item.type === "date") {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `date-answer${index}`;
+        input.placeholder = 'Введите дату (например, 04.10.1957)';
+        optionsDiv.appendChild(input);
     } else if (item.type === "match") {
         item.matches.forEach((match, subIndex) => {
             const subDiv = document.createElement('div');
