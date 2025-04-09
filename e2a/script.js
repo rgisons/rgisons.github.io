@@ -164,12 +164,11 @@ function createQuestionElement(item, index) {
         input.id = `number-answer${index}`;
         input.placeholder = 'Введите число';
         optionsDiv.appendChild(input);
-    
     } else if (item.type === "date") {
         const input = document.createElement('input');
         input.type = 'text';
         input.id = `date-answer${index}`;
-        input.placeholder = 'Введите дату (например, 04.10.1957)';
+        input.placeholder = 'Введите дату (например, 20.07.1969)';
         optionsDiv.appendChild(input);
     } else if (item.type === "match") {
         item.matches.forEach((match, subIndex) => {
@@ -255,8 +254,7 @@ function checkAnswer() {
             .map(input => input.value);
         if (selected.length === 0) return alert('Пожалуйста, выберите хотя бы один вариант!');
         answers[currentQuestion] = selected;
-    } 
-    else if (quizData[currentQuestion].type === "number") {
+    } else if (quizData[currentQuestion].type === "number") {
         selected = sanitizeInput(currentQ.querySelector(`#number-answer${currentQuestion}`).value.trim());
         if (!selected) return alert('Пожалуйста, введите число!');
         answers[currentQuestion] = selected;
@@ -269,12 +267,10 @@ function checkAnswer() {
             selected.push(selectedOption);
         }
         answers[currentQuestion] = selected;
-    } else if (item.type === "date") { // Добавляем поддержку date
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = `date-answer${index}`;
-        input.placeholder = 'Введите дату (например, 20.07.1969)';
-        optionsDiv.appendChild(input);
+    } else if (quizData[currentQuestion].type === "date") {
+        selected = sanitizeInput(currentQ.querySelector(`#date-answer${currentQuestion}`).value.trim());
+        if (!selected) return alert('Пожалуйста, введите дату!');
+        answers[currentQuestion] = selected;
     }
 
     checkButton.style.display = 'none';
@@ -297,7 +293,7 @@ function generateCode(score) {
 function showResults() {
     let score = 0;
     quizData.forEach((question, index) => {
-        if (question.type === "radio" || question.type === "text" || question.type === "number") {
+        if (question.type === "radio" || question.type === "text" || question.type === "number" || question.type === "date") {
             if (answers[index] === question.correct) score++;
         } else if (question.type === "checkbox") {
             if (JSON.stringify(answers[index]?.sort()) === JSON.stringify(question.correct.sort())) score++;
