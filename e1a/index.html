@@ -2,37 +2,207 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Космическая викторина</title>
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        frame-src 'self' https://docs.google.com;
-        script-src 'self';
-        style-src 'self' https://fonts.googleapis.com;
-        font-src 'self' https://fonts.gstatic.com;
-        img-src 'self';
-        connect-src 'self';
-        form-action 'self' https://docs.google.com;
-    ">
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+    <title>Викторина про космос</title>
+    <style>
+        body {
+            background-color: #000033;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        #intro, #quiz, #result {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        #intro {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        #quiz, #result {
+            display: none;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #3333cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #4d4dff;
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        input[type="number"], input[type="text"], input[type="date"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            margin-top: 10px;
+        }
+        .options label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 250px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <h1>Как готовят космонавтов</h1>
-        <div id="intro" class="intro-text">
-            <p>Подготовка космонавтов в России — это сложный и многоступенчатый процесс, который проводится в Центре подготовки космонавтов имени Ю. А. Гагарина (Звездный городок, Московская область). Кандидаты проходят медицинское обследование, проверку профессиональной пригодности и физическую подготовку. Общекосмическая подготовка длится около двух лет, после чего будущий космонавт сдает государственный экзамен и получает диплом.</p>
-            <p>В процессе обучения космонавты изучают теоретические основы космонавтики, конструкции бортовых систем и методы работы с современным оборудованием, включая 3D-принтеры и робототехнические системы. Заключительным этапом подготовки являются тренировки на центрифуге, где отрабатываются перегрузки, и полеты на самолете-лаборатории Ил-76 МДК для имитации невесомости. В 2026 году Роскосмос планирует провести новый набор космонавтов, чтобы обеспечить пилотируемые миссии на МКС и Луну.</p>
-            <button id="start-quiz">Начать викторину</button>
-        </div>
-        <div id="quiz" class="quiz-content"></div>
-        <div class="navigation">
-            <button id="prev">Назад</button>
-            <button id="check">Проверить</button>
-            <button id="next">Далее</button>
-        </div>
-        <div id="result" class="result-container"></div>
+    <div id="intro">
+        <p>Луна — единственный естественный спутник Земли и ближайшее к нам небесное тело. Она находится на расстоянии около 384 400 км от Земли и имеет диаметр примерно 3474 км. Луна образовалась около 4,5 миллиардов лет назад, предположительно в результате столкновения Земли с крупным небесным объектом. Поверхность Луны покрыта кратерами, горами и равнинами, которые называются морями. Эти "моря" заполнены застывшей лавой и не содержат воды. Луна играет важную роль в жизни Земли: она стабилизирует ось вращения планеты и вызывает приливы и отливы благодаря своему гравитационному влиянию.</p>
+        <p>Первый человек ступил на её поверхность 20 июля 1969 года во время миссии Apollo 11. Это событие стало важной вехой в истории космонавтики. Сейчас Луна остается объектом интереса для ученых, и планируются новые пилотируемые миссии, включая создание лунной базы.</p>
+        <button onclick="startQuiz()">Начать викторину</button>
     </div>
-    <script src="script.js"></script>
+
+    <div id="quiz">
+        <div id="question"></div>
+        <button onclick="nextQuestion()">Следующий вопрос</button>
+    </div>
+
+    <div id="result">
+        <p id="score"></p>
+        <p id="code"></p>
+        <button onclick="copyCode()">Скопировать код</button>
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc46otjgrk50k1CsN0_IX1nXHKPcuPpA7w6T_4BSjxjzTJJ5g/viewform?embedded=true"></iframe>
+    </div>
+
+    <script>
+        const quizData = [
+            { question: "На каком расстоянии Луна находится от Земли?", type: "number", correct: "384400" },
+            { question: "Как образовалась Луна?", type: "radio", options: ["В результате взрыва звезды", "Она всегда была рядом с Землей", "В результате столкновения Земли с крупным объектом"], correct: "В результате столкновения Земли с крупным объектом" },
+            { question: "Что такое лунные моря? (в ответе нужно написать ДВА слова с МАЛЕНЬКОЙ буквы)", type: "text", correct: "застывшая лава" },
+            { question: "Когда человек впервые ступил на Луну?", type: "date", correct: "20.07.1969" },
+            { question: "Какие явления на Земле вызывает Луна?", type: "checkbox", options: ["Приливы", "Ураганы", "Землетрясения", "Отливы"], correct: ["Приливы", "Отливы"] },
+            { question: "Соотнесите понятия с их описаниями", type: "match", matches: [
+                { item: "Лунные моря", options: ["Результат ударов метеоритов", "Застывшие равнины лавы", "Горы на поверхности Луны"], correct: "Застывшие равнины лавы" },
+                { item: "Лунные кратеры", options: ["Результат ударов метеоритов", "Застывшие равнины лавы", "Горы на поверхности Луны"], correct: "Результат ударов метеоритов" },
+                { item: "Лунные горы", options: ["Результат ударов метеоритов", "Застывшие равнины лавы", "Горы на поверхности Луны"], correct: "Горы на поверхности Луны" }
+            ]},
+            { question: "Какой диаметр у Луны?", type: "number", correct: "3474" },
+            { question: "Какая миссия первой доставила человека на Луну?", type: "radio", options: ["Apollo 11", "Apollo 13", "Sputnik 1"], correct: "Apollo 11" },
+            { question: "Какую роль Луна играет для Земли?", type: "checkbox", options: ["Стабилизирует ось", "Защищает от астероидов", "Вызывает приливы", "Создает магнитное поле"], correct: ["Стабилизирует ось", "Вызывает приливы"] },
+            { question: "Какой возраст Луны?", type: "radio", options: ["2 миллиарда лет", "4,5 миллиарда лет", "1 миллиард лет"], correct: "4,5 миллиарда лет" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuiz() {
+            document.getElementById("intro").style.display = "none";
+            document.getElementById("quiz").style.display = "block";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizData[currentQuestion];
+            const questionDiv = document.getElementById("question");
+            questionDiv.innerHTML = `<div class="question">${q.question}</div>`;
+
+            if (q.type === "number") {
+                questionDiv.innerHTML += '<input type="number" id="answer">';
+            } else if (q.type === "text") {
+                questionDiv.innerHTML += '<input type="text" id="answer">';
+            } else if (q.type === "date") {
+                questionDiv.innerHTML += '<input type="date" id="answer">';
+            } else if (q.type === "radio") {
+                questionDiv.innerHTML += '<div class="options">';
+                q.options.forEach(option => {
+                    questionDiv.innerHTML += `<label><input type="radio" name="answer" value="${option}">${option}</label><br>`;
+                });
+                questionDiv.innerHTML += '</div>';
+            } else if (q.type === "checkbox") {
+                questionDiv.innerHTML += '<div class="options">';
+                q.options.forEach(option => {
+                    questionDiv.innerHTML += `<label><input type="checkbox" name="answer" value="${option}">${option}</label><br>`;
+                });
+                questionDiv.innerHTML += '</div>';
+            } else if (q.type === "match") {
+                questionDiv.innerHTML += '<div class="options">';
+                q.matches.forEach((match, index) => {
+                    questionDiv.innerHTML += `<p>${match.item}</p><select id="match-${index}">`;
+                    match.options.forEach(option => {
+                        questionDiv.innerHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    questionDiv.innerHTML += '</select>';
+                });
+                questionDiv.innerHTML += '</div>';
+            }
+        }
+
+        function nextQuestion() {
+            const q = quizData[currentQuestion];
+            let userAnswer;
+
+            if (q.type === "number" || q.type === "text") {
+                userAnswer = document.getElementById("answer").value;
+            } else if (q.type === "date") {
+                userAnswer = document.getElementById("answer").value.split('-').reverse().join('.');
+            } else if (q.type === "radio") {
+                const selected = document.querySelector('input[name="answer"]:checked');
+                userAnswer = selected ? selected.value : '';
+            } else if (q.type === "checkbox") {
+                userAnswer = Array.from(document.querySelectorAll('input[name="answer"]:checked')).map(input => input.value);
+            } else if (q.type === "match") {
+                userAnswer = q.matches.map((match, index) => document.getElementById(`match-${index}`).value);
+            }
+
+            checkAnswer(userAnswer, q);
+            currentQuestion++;
+
+            if (currentQuestion < quizData.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function checkAnswer(userAnswer, question) {
+            if (question.type === "checkbox") {
+                if (JSON.stringify(userAnswer.sort()) === JSON.stringify(question.correct.sort())) {
+                    score++;
+                }
+            } else if (question.type === "match") {
+                if (userAnswer.every((ans, i) => ans === question.matches[i].correct)) {
+                    score++;
+                }
+            } else {
+                if (JSON.stringify(userAnswer) === JSON.stringify(question.correct)) {
+                    score++;
+                }
+            }
+        }
+
+        function showResult() {
+            document.getElementById("quiz").style.display = "none";
+            document.getElementById("result").style.display = "block";
+            const randomCode = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById("score").textContent = `Ваш результат: ${score} из ${quizData.length}`;
+            document.getElementById("code").textContent = `Ваш код: ${randomCode}${score}`;
+        }
+
+        function copyCode() {
+            const code = document.getElementById("code").textContent.split(': ')[1];
+            navigator.clipboard.writeText(code);
+            alert('Код скопирован!');
+        }
+    </script>
 </body>
 </html>
