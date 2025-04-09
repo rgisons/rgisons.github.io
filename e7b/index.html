@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-src https://docs.google.com">
+    <title>Викторина про космос</title>
+    <style>
+        body {
+            background-color: #000033;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        #intro, #quiz, #result {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        #intro {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        #quiz, #result {
+            display: none;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #3333cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        button:hover {
+            background-color: #4d4dff;
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            background-color: #1a1a4d;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        input[type="number"], input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .options {
+            margin: 10px 0;
+            padding: 0;
+            text-align: left;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 5px 0;
+            font-size: 18px;
+        }
+        input[type="radio"], input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .match-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #2a2a6d;
+            border-radius: 5px;
+            justify-content: flex-start;
+        }
+        .match-item p {
+            margin: 0 15px 0 0;
+            width: auto;
+            min-width: 150px;
+            font-size: 16px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            color: black;
+            cursor: pointer;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="intro">
+        <h1>Международная Космическая Станция</h1>
+        <p>Международная космическая станция (МКС) — это крупнейший международный проект в истории освоения космоса.</p>
+        <p>Она была запущена в 1998 году и стала результатом сотрудничества пяти космических агентств: NASA, Роскосмоса, ESA, JAXA и CSA.</p>
+        <p>МКС находится на орбите Земли на высоте около 400 км.</p>
+        <p>Станция движется со скоростью примерно 28 000 км/ч.</p>
+        <p>МКС служит научной лабораторией, где проводятся исследования в условиях микрогравитации.</p>
+
+        <p>Жизнь на МКС сильно отличается от привычной земной.</p>
+        <p>Космонавты спят в специальных мешках, чтобы не уплывать во сне.</p>
+        <p>Они едят лиофилизированную пищу, которую нужно разводить водой.</p>
+        <p>Напитки употребляются через трубочки.</p>
+        <p>В условиях микрогравитации невозможно принимать душ.</p>
+        <p>Поэтому гигиена поддерживается влажными салфетками.</p>
+        <p>Упражнения на беговой дорожке и силовых тренажерах обязательны для поддержания здоровья.</p>
+        <p>Они помогают сохранить мышцы и кости в хорошем состоянии.</p>
+        <p>На МКС работает экипаж из 10-12 человек.</p>
+        <p>Они проводят эксперименты, наблюдают за Землей и поддерживают работу станции.</p>
+        <button id="startButton">Начать викторину</button>
+    </div>
+
+    <div id="quiz">
+        <h1>Международная Космическая Станция</h1>
+        <div id="question"></div>
+        <button id="nextButton">Следующий вопрос</button>
+    </div>
+
+    <div id="result">
+        <h1>Международная Космическая Станция</h1>
+        <p id="score"></p>
+        <p id="code"></p>
+        <button id="copyButton">Скопировать код</button>
+        <iframe id="googleForm" src="https://docs.google.com/forms/d/e/1FAIpQLSc46otjgrk50k1CsN0_IX1nXHKPcuPpA7w6T_4BSjxjzTJJ5g/viewform?embedded=true"></iframe>
+    </div>
+
+    <script src="quiz.js"></script>
+</body>
+</html>
