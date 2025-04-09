@@ -178,8 +178,8 @@ function showResult() {
     quiz.style.display = "none";
     result.style.display = "block";
     const randomCode = Math.floor(100000 + Math.random() * 900000);
-    scoreDisplay.textContent = `Ваш результат: ${score} из ${quizData.length}`;
-    codeDisplay.textContent = `Ваш код: ${randomCode}${score}`;
+    scoreDisplay.textContent = `Поздравляем, вы прошли викторину! Ваш результат: ${score} из ${quizData.length}`;
+    codeDisplay.textContent = `Ваш уникальный код, который нужно вставить в форму ниже: ${randomCode}${score} P.S. Форму можно опустить вниз`;
 }
 
 function copyCode() {
